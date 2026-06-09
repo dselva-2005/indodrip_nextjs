@@ -30,6 +30,21 @@ export default {
 
       const response = await handleRequest(request);
 
+      // Add CSP headers to allow Unsplash images
+      const cspDirectives = [
+        "default-src 'self' https://cdn.shopify.com https://shopify.com http://localhost:*",
+        "img-src 'self' https://cdn.shopify.com https://shopify.com https://images.unsplash.com data: blob:",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.shopify.com https://shopify.com",
+        "style-src 'self' 'unsafe-inline' https://cdn.shopify.com",
+        "font-src 'self' data: https://cdn.shopify.com",
+        "connect-src 'self' https://cdn.shopify.com https://shopify.com ws://localhost:*",
+      ];
+
+      response.headers.set(
+        'Content-Security-Policy',
+        cspDirectives.join('; ')
+      );
+
       if (hydrogenContext.session.isPending) {
         response.headers.set(
           'Set-Cookie',
